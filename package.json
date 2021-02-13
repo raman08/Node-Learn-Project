@@ -1,0 +1,19 @@
+{
+  "name": "nodejs-complete-fuide",
+  "version": "1.0.0",
+  "description": "The project for the nodejs-complete-guide course",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "js",
+    "javascript",
+    "express",
+    "npm",
+    "raman",
+    "raman08"
+  ],
+  "author": "Raman Preet Singh",
+  "license": "MIT"
+}
