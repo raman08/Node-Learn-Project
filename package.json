@@ -4,7 +4,8 @@
   "description": "The project for the nodejs-complete-guide course",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
   },
   "keywords": [
     "js",
@@ -15,5 +16,11 @@
     "raman08"
   ],
   "author": "Raman Preet Singh",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "nodemod": "^2.7.2"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.7"
+  }
 }
