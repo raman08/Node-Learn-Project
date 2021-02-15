@@ -136,3 +136,38 @@ app.use((req, res, next) => {
 	   .send('<h1>404-Page Not Found</h1>')
 });
 ```
+
+### Adding Custom HTML Pages
+
+- In general case the html files are added in the views folder.
+
+- We will use the `sendFile` method of the responce object for sending static html files.
+
+```js
+const path = require('path');
+
+app.method('/end/point',(req, res, next) => {
+	// Sending the responce
+	res.sendFile(path.join(path.dirname(process.mainModule.filename), 'path_to_the_file'));
+
+});
+
+```
+
+- `__dirname` will give the current directory  in which the file is located.
+
+- The `join` method will join the path given in the arguments in the os formate.
+
+_Note:_ We can use `process.mainModule.filename` to get the main file which started the prrocess/server and then find its path via `path.dirname()` method. This will give us the root folder of the project.
+
+### Serving Static Files
+
+- All static files should be in public folder.
+
+- To acess public folder add the following in the main application file.
+
+```js
+app.use(express.static(path.join(__dirname, 'public')));
+```
+
+- The `express.static` will mark the folder given in argument as public and can be easily asscelible by the users.
