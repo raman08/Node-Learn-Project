@@ -36,3 +36,27 @@ app.set('views', 'views');
 ```js
 res.render('{{ location }}')
 ```
+
+#### Setting up default layouts
+
+- To add a default layouts create a folder in views where all your layouts are stored.
+
+- To store data in the layouts(where the dynamic content is store) use block.
+
+```
+block {{ block_name }}
+```
+
+- To extends a layout in the template use
+
+```js
+extends /path/to/layout
+```
+
+
+- In the template you can add the data in the block by
+
+```
+block {{ name }}
+	data
+```

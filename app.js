@@ -1,13 +1,15 @@
 const path = require('path');
 
 const express = require('express');
-
 const bodyParser = require('body-parser');
+const expressHbs = require('express-handlebars');
 
 // Creating the express app
 const app = express();
 
-app.set('view engine', 'pug');
+app.engine('hbs', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main'}));
+
+app.set('view engine', 'hbs');
 app.set('views', './views');
 
 
@@ -25,7 +27,7 @@ app.use(shopRoutes);
 // Adding the 404 page
 app.use((req, res, next) => {
 	res.status(404)
-	   .sendFile(path.join(__dirname, 'views', '404.html'));
+	   .render('404', { title: '404 - Page Not found', layouts: false});
 });
 
 app.listen(3000);
