@@ -37,7 +37,7 @@ app.set('views', 'views');
 res.render('{{ location }}')
 ```
 
-#### Setting up default layouts
+#### Setting up default layouts in PUG
 
 - To add a default layouts create a folder in views where all your layouts are stored.
 
