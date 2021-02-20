@@ -25,4 +25,6 @@ app.use(shopRoutes);
 // Adding the 404 page
 app.use(errorController.get404);
 
-app.listen(3000);
+app.listen(3000, () => {
+	console.log('Server started at http://localhost:3000');
+});
