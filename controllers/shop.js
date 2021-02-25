@@ -7,9 +7,20 @@ exports.getProducts = (req, res, next) => {
 			title: 'All Products',
 			products: products,
 			path: '/products'
-		})
+		});
 	});
-}
+};
+
+exports.getProduct = (req, res, next) => {
+	const productId = req.params.productId;
+	Product.findById(productId, product => {
+		console.log(product);
+		res.render('shop/product-details', {
+			title: 'Product Details',
+			product: product
+		});
+	});
+};
 
 exports.getIndex =  (req, res, next) => {
 	Product.fetchAll((products) => {

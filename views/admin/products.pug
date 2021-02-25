@@ -11,12 +11,15 @@ block content
 					article.card.product-item
 						header.class__header
 							h1.product__title #{ product.title }
+
 						.card__image
 							- var imageUrl = product.imageUrl;
 							img(src=imageUrl, alt="Book")
+
 						.card__content
 							h2.product__price $ #{ product.price }
 							p.product__description #{ product.description }
+
 						.cards__actions
 							a(href='/admin/edit-product', class='btn') Edit
 							form(action='/admin/delete-product', method='POST')

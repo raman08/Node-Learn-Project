@@ -12,12 +12,14 @@ block content
 						header.class__header
 							h1.product__title #{ product.title }
 						.card__image
-							- var imageUrl = product.imageUrl;
+							- let imageUrl = product.imageUrl;
 							img(src=imageUrl, alt="Book")
 						.card__content
 							h2.product__price $ #{ product.price }
 							p.product__description #{ product.description }
 						.cards__actions
+							- let productUrl = `/products/${product.id}`
+							a(href=productUrl).btn Details
 							form(action='/add-to-cart', method='POST')
 								button.btn Add to card
 		else

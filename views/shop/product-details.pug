@@ -1,1 +1,16 @@
 include ../layouts/main-layout
+
+//- block styles
+
+block content
+	main.centered
+		h1 #{ product.title }
+		hr
+		div
+			- var imageUrl = product.imageUrl
+			img(src=imageUrl, alt="Product Title")
+		h2 #{ product.price }
+		p #{ product.description }
+
+		form(action="/cart", method="POST")
+			button.btn(type="submit") Add to cart
