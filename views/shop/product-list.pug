@@ -1,4 +1,5 @@
 extends ../layouts/main-layout.pug
+include ../mixin/add-to-cart.pug
 
 block styles
 	link(rel="stylesheet", href="/css/product.css")
@@ -20,7 +21,7 @@ block content
 						.cards__actions
 							- let productUrl = `/products/${product.id}`
 							a(href=productUrl).btn Details
-							form(action='/add-to-cart', method='POST')
-								button.btn Add to card
+							+addToCart(product.id)
+
 		else
 			h1 No Products
