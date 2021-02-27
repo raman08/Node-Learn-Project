@@ -21,7 +21,8 @@ block content
 							p.product__description #{ product.description }
 
 						.cards__actions
-							a(href='/admin/edit-product', class='btn') Edit
+							- editLink = `/admin/edit-product/` + product.id + '?edit=true';
+							a(href=editLink).btn Edit
 							form(action='/admin/delete-product', method='POST')
 								button.btn(type='submit') Delete
 
