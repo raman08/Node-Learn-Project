@@ -1,1 +1,16 @@
 include ../layouts/main-layout
+
+block content
+	main
+		if products.length > 0
+			ul
+				each product in products
+					li
+						p #{product.productData.title} (#{product.quantity})
+						form(action="/cart-delete-item", method="POST")
+							- productId = product.productData.id;
+
+							input(type="hidden", name="productId", value=productId)
+							button.btn(type="submit") Delete
+		else
+			h1 No Product in Cart
