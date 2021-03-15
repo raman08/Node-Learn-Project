@@ -8,12 +8,21 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-	const {title, imageUrl, price, desctiption } = req.body;
+	const {title, imageUrl, price, description } = req.body;
 
-	const product = new Product(null, title, imageUrl, desctiption, price);
-	product.save();
+	console.log(title, imageUrl, price, description);
+	// console.log(req.body);
 
-	res.redirect('/products');
+	const product = new Product(null, title, imageUrl, description, price);
+
+	product.save()
+			.then(() => {
+				res.redirect('/products');
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+
 }
 
 exports.getEditProduct = (req, res, next) => {
