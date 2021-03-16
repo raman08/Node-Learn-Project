@@ -6,7 +6,7 @@ block content
 	main.centered
 		h1 #{ product.title }
 		hr
-		div
+		div.image
 			- let imageUrl = product.imageUrl
 			img(src=imageUrl, alt="Product Title")
 		h2 #{ product.price }
