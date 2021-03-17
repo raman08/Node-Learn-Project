@@ -10,11 +10,11 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
 	const {title, imageUrl, price, description } = req.body;
 
-	Product.create({
+	req.user.createProduct({
 		title: title,
 		price: price,
 		imageUrl: imageUrl,
-		description: description
+		description: description,
 	})
 	.then(result => {
 		// console.log(result);
@@ -35,9 +35,10 @@ exports.getEditProduct = (req, res, next) => {
 	}
 
 	const productId = req.params.productId;
-
-	Product.findByPk(productId)
-		.then(product => {
+	req.user.getProducts({ where: { id: productId } })
+	// Product.findByPk(productId)
+		.then(products => {
+			const product = products[0];
 			if (!product) {
 				console.log('Product Not found');
 				return res.redirect('/');
@@ -77,7 +78,8 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProduct = (req, res, next) => {
-	Product.findAll()
+	// Product.findAll()
+	req.user.getProducts()
 		.then(products => {
 			res.render('admin/products', {
 				title: 'Shop Home',
@@ -92,7 +94,8 @@ exports.getProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
 	const productId = req.body.productId;
-	Product.findByPk(productId)
+	// Product.findByPk(productId)
+	req.user.getProducts()
 		.then(product => {
 			product.destroy();
 		})
