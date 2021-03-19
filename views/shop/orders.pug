@@ -1,4 +1,15 @@
 include ../layouts/main-layout
 
-main
-	h1 Nothing Here
+block content
+	if orders.length <= 0
+		main
+			h1 Nothing Here
+	else
+		//- h1 Orders here
+		ul
+			each order in orders
+				li
+					h1 #{order.id}
+					ul
+						each product in order.products
+							li #{product.title} (#{product.orderItem.quantity})

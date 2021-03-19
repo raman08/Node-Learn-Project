@@ -9,6 +9,8 @@ const Product = require('./models/product');
 const User = require('./models/user');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cart-item');
+const order = require('./models/order');
+const orderItem = require('./models/order-item');
 
 
 // Creating the express app
@@ -20,6 +22,8 @@ app.set('views', './views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes= require('./routes/shop');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 // Setting up default body parser
 app.use(bodyParser.urlencoded({extended: false}));
@@ -55,6 +59,11 @@ Cart.belongsTo(User);
 
 Cart.belongsToMany(Product, { through: CartItem});
 Product.belongsToMany(Cart, { through: CartItem});
+
+Order.belongsTo(User);
+User.hasMany(Order);
+
+Order.belongsToMany(Product, { through: OrderItem });
 
 // Syncing the database
 sequelize
