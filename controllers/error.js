@@ -3,5 +3,4 @@ exports.get404 = (req, res, next) => {
 		.render('404', {
 			title: '404 - Page Not found'
 		});
-
 }
