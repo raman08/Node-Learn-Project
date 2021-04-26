@@ -29,7 +29,7 @@ block content
 				textarea(rows=4, name="description")#description #{description}
 
 			if editing
-				- value = product.id;
+				- value = product._id;
 				input(type="hidden", value=value, name='productId')
 
 			button.btn(type="submit") #{ editing ? 'Update Product' : 'Add Product'}

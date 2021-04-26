@@ -21,10 +21,10 @@ block content
 							p.product__description #{ product.description }
 
 						.card__actions
-							- editLink = `/admin/edit-product/` + product.id + '?edit=true';
+							- editLink = `/admin/edit-product/` + product._id + '?edit=true';
 							a(href=editLink).btn Edit
 							form(action='/admin/delete-product', method='POST')
-								- productId = product.id;
+								- productId = product._id;
 								input(type='hidden', value = productId, name="productId")
 								button.btn(type='submit') Delete
 

@@ -3,10 +3,11 @@ const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
 
 let _db;
-const url = 'mongodb+srv://node_user:J0sdQ8pXtyzYW7i3@cluster0.8zekm.mongodb.net/shop?retryWrites=true&w=majority';
+const url =
+	'mongodb+srv://node_shop:G15NJtyDC5S1FH6H@cluster0.8zekm.mongodb.net/Products?retryWrites=true&w=majority';
 
-const mongoConnect = (callback) => {
-	MongoClient.connect(url, { useUnifiedTopology: true })
+const mongoConnect = callback => {
+	MongoClient.connect(url, { useUnifiedTopology: true, useNewUrlParser: true })
 		.then(client => {
 			console.log('Connected!!');
 			_db = client.db();
@@ -19,12 +20,12 @@ const mongoConnect = (callback) => {
 };
 
 const getDb = () => {
-	if(_db) {
+	if (_db) {
 		return _db;
 	}
 
 	throw 'No database Found';
-}
+};
 
 exports.mongoConnect = mongoConnect;
 exports.getDb = getDb;

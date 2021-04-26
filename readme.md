@@ -1,5 +1,4 @@
-#  Notes of Course
-
+# Notes of Course
 
 ### Understanding the Basics
 
@@ -9,8 +8,6 @@
 
 **_Readme for this module_**:
 [Readme](Docs/3_Basic_node_js/3_Basic_node_js_readme.md)
-
-
 
 ### Using Express.js
 

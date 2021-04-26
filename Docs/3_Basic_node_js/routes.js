@@ -1,24 +1,24 @@
 const fs = require('fs');
 
 const requestHandler = (req, res) => {
-
 	const url = req.url;
 	const method = req.method;
 
-	if(url === '/'){
+	if (url === '/') {
 		res.setHeader('Content-Type', 'text/html');
 		res.write('<html>');
 		res.write('<head><title>Home</title></head>');
-		res.write('<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Submit</button></form></body>');
+		res.write(
+			'<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Submit</button></form></body>'
+		);
 		return res.write('</html>');
 	}
 
-	if(url === '/message' && method === 'POST') {
-
+	if (url === '/message' && method === 'POST') {
 		const body = [];
 
 		// Whever the stream of data is comming do this,
-		req.on('data', (chunk) => {
+		req.on('data', chunk => {
 			console.log(chunk);
 			body.push(chunk);
 		});
@@ -28,8 +28,7 @@ const requestHandler = (req, res) => {
 			const parsedBody = Buffer.concat(body).toString();
 			const message = parsedBody.split('=')[1];
 
-
-			fs.writeFile('message.text', message, (err) => {
+			fs.writeFile('message.text', message, err => {
 				res.statusCode = 302;
 				res.setHeader('Location', '/');
 				return res.end();

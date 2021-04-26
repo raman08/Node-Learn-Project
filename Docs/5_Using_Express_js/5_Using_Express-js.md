@@ -24,7 +24,6 @@ app.listen(3000);
 
 - This is just a way to create a basic http server using the exprees.js.
 
-
 ## Using the middleware
 
 The express.js is basically a middleware where is recieve a request and then pass the request to the another function and so on untill it send back the responce.
@@ -34,11 +33,12 @@ The express.js is basically a middleware where is recieve a request and then pas
 
 // Using the express middleware.
 
-app.use(//A function with three parameters-:
-(request, respnce, next) => {
-	// The logic
-});
-
+app.use(
+	//A function with three parameters-:
+	(request, respnce, next) => {
+		// The logic
+	}
+);
 ```
 
 - The request and responce are same as before.
@@ -48,9 +48,10 @@ app.use(//A function with three parameters-:
 ### Sending the responce
 
 ```js
-res.send(
+res
+	.send
 	//Anything to send
-);
+	();
 ```
 
 - The expressjs will automatically set the header for the responce you send or we can manually overrite this.
@@ -64,7 +65,6 @@ res.send(
 ```js
 app.use('/route/path', callback_function);
 ```
-
 
 ### Parsing the Incomming the Request
 
@@ -93,8 +93,6 @@ app.post('/product', (req, res, next) => {
 
 - The `post` method all us to send the request only for the post request. Similary there is `get` method for handeling only the get request.
 
-
-
 ### Seprating the ROUTES
 
 - It is always the good practice to seprate the routes for the app.
@@ -109,9 +107,10 @@ const express = require('express');
 // Using Routes to handle aur routes.
 const router = express.Router();
 
-router.get(
+router
+	.get
 	// handler for our request method.
-);
+	();
 
 /* Example
 
@@ -132,8 +131,7 @@ module.exports = router;
 ```js
 // Adding the 404 page
 app.use((req, res, next) => {
-	res.status(404)
-	   .send('<h1>404-Page Not Found</h1>')
+	res.status(404).send('<h1>404-Page Not Found</h1>');
 });
 ```
 
@@ -146,15 +144,15 @@ app.use((req, res, next) => {
 ```js
 const path = require('path');
 
-app.method('/end/point',(req, res, next) => {
+app.method('/end/point', (req, res, next) => {
 	// Sending the responce
-	res.sendFile(path.join(path.dirname(process.mainModule.filename), 'path_to_the_file'));
-
+	res.sendFile(
+		path.join(path.dirname(process.mainModule.filename), 'path_to_the_file')
+	);
 });
-
 ```
 
-- `__dirname` will give the current directory  in which the file is located.
+- `__dirname` will give the current directory in which the file is located.
 
 - The `join` method will join the path given in the arguments in the os formate.
 

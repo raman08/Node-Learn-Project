@@ -12,5 +12,5 @@
 
 ### Controlles
 
- - Connects model and views
- - Work both ways.
+- Connects model and views
+- Work both ways.

@@ -7,17 +7,13 @@ const http = require('http'); // Requseting the http liberary.
 
 // Creating The server via createServer method.
 const server = http.createServer((req, res) => {
-
 	// This code will run everytime a request is made.
-
 	// The request and responce are handled here.
-
 });
 
 // Starting the Server
 server.listen(3000);
 ```
-
 
 - The createServer method will take a callback function which will run everytime a request is made to the serve.
 
@@ -30,7 +26,6 @@ server.listen(3000);
 - The respose will need to be filled with the responce that we wnated. See Code Snippet below to see.
 
 ```js
-
 // Need to be inside the createServe callback function.
 
 // Setting the headers,
@@ -46,19 +41,17 @@ res.write('</html>');
 res.end();
 ```
 
-
 ## Working with Data
 
 When the user enter the data it will come to the server as a stream. TO work with these stream we need to use buffer.
 
 The incomming data is part of the request object.
 
-*Note:* The buffer will store the steam of data untill its used.
+_Note:_ The buffer will store the steam of data untill its used.
 
 ```js
-
 // Whever the stream of data send do this,
-req.on('data', (chunk) => {
+req.on('data', chunk => {
 	// Do somthing with incomming data.
 });
 
@@ -66,9 +59,7 @@ req.on('data', (chunk) => {
 req.on('end', () => {
 	// After the data is fully recived do this.
 });
-
 ```
-
 
 ## Working with multiple files
 
@@ -79,15 +70,13 @@ But when we define the constant for the module, we need to export the functions 
 For that we will use the following syntax
 
 ```js
-
 // For exporting a single thing.
 module.exports = 'somthing';
-
 
 // For exporting multiple things
 module.exports = {
 	// Some key value pair
-}
+};
 
 // OR
 
@@ -95,6 +84,4 @@ exports.key = value;
 // exports.key = value;
 // exports.key = value;
 // exports.key = value;
-
-
 ```
