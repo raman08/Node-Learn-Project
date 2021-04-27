@@ -10,9 +10,9 @@ block content
 				each product in products
 					li.cart__item
 						h1 #{product.title}
-						h2 Quantity: #{product.cartItem.quantity}
+						h2 Quantity: #{product.quantity}
 						form(action="/cart-delete-item", method="POST")
-							- productId = product.id;
+							- productId = product._id;
 
 							input(type="hidden", name="productId", value=productId)
 							button.btn.danger(type="submit") Delete

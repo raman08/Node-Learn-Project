@@ -10,11 +10,17 @@ exports.getAddProduct = (req, res) => {
 exports.postAddProduct = (req, res) => {
 	const { title, imageUrl, price, description } = req.body;
 
-	const product = new Product(title, price, description, imageUrl);
+	const product = new Product(
+		title,
+		price,
+		description,
+		imageUrl,
+		null,
+		req.user._id
+	);
 	product
 		.save()
 		.then(() => {
-			// console.log(result);
 			console.log('Product created Sucessfully!!');
 			res.redirect('/admin/products');
 		})
@@ -33,8 +39,6 @@ exports.getEditProduct = (req, res) => {
 	const productId = req.params.productId;
 	Product.findById(productId)
 		.then(product => {
-			console.log('getProduct');
-			console.log(product);
 			if (!product) {
 				console.log('Product Not found');
 				return res.redirect('/');
