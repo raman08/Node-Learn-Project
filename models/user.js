@@ -25,6 +25,7 @@ class User {
 
 	addToCart(product) {
 		let cartProductIndex;
+		console.log(product);
 		try {
 			cartProductIndex = this.cart.items.findIndex(cp => {
 				return cp.productId.toString() === product._id.toString();
@@ -69,6 +70,8 @@ class User {
 			.toArray()
 			.then(products => {
 				return products.map(product => {
+					console.log('Get Cart product');
+					console.log(product);
 					return {
 						...product,
 						quantity: this.cart.items.find(item => {
@@ -92,6 +95,33 @@ class User {
 				{ _id: new mongodb.ObjectID(this._id) },
 				{ $set: { cart: { items: updatedCartItems } } }
 			);
+	}
+
+	addOrder() {
+		const db = getDb();
+		return this.getCart()
+			.then(products => {
+				const newOrder = { items: products, user: { _id: this._id } };
+				return db.collection('orders').insertOne(newOrder);
+			})
+			.then(result => {
+				console.log(result);
+				this.cart.items = [];
+				return db
+					.collection('users')
+					.updateOne(
+						{ _id: new mongodb.ObjectID(this._id) },
+						{ $set: { cart: { items: [] } } }
+					);
+			});
+	}
+
+	getOrders() {
+		const db = getDb();
+		return db
+			.collection('orders')
+			.find({ 'user._id': mongodb.ObjectID(this._id) })
+			.toArray();
 	}
 
 	static findById(userId) {
