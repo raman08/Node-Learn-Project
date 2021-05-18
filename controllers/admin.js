@@ -4,20 +4,21 @@ exports.getAddProduct = (req, res) => {
 	res.render('admin/edit-product', {
 		title: 'Add Product',
 		path: '/admin/add-product',
+		isAuthanticated: req.session.isLoggedIn,
 	});
 };
 
 exports.postAddProduct = (req, res) => {
 	const { title, imageUrl, price, description } = req.body;
 
-	const product = new Product(
-		title,
-		price,
-		description,
-		imageUrl,
-		null,
-		req.user._id
-	);
+	const product = new Product({
+		title: title,
+		price: price,
+		description: description,
+		imageUrl: imageUrl,
+		userId: req.user._id,
+	});
+
 	product
 		.save()
 		.then(() => {
@@ -48,6 +49,7 @@ exports.getEditProduct = (req, res) => {
 				path: '/admin/edit-product',
 				editing: editMode,
 				product: product,
+				isAuthanticated: req.session.isLoggedIn,
 			});
 		})
 		.catch(err => {
@@ -58,10 +60,16 @@ exports.getEditProduct = (req, res) => {
 exports.postEditProduct = (req, res) => {
 	const { productId, title, imageUrl, price, description } = req.body;
 
-	const product = new Product(title, price, description, imageUrl, productId);
-
-	product
-		.save()
+	Product.findByIdAndUpdate(
+		productId,
+		{
+			title: title,
+			imageUrl: imageUrl,
+			description: description,
+			price: price,
+		},
+		{ new: true }
+	)
 		.then(() => {
 			console.log('Product Updated Sucessfully');
 			res.redirect('/admin/products');
@@ -73,12 +81,13 @@ exports.postEditProduct = (req, res) => {
 
 exports.getProduct = (req, res) => {
 	// Product.findAll()
-	Product.fetchAll()
+	Product.find()
 		.then(products => {
 			res.render('admin/products', {
 				title: 'Shop Home',
 				products: products,
 				path: '/admin/products',
+				isAuthanticated: req.session.isLoggedIn,
 			});
 		})
 		.catch(err => {
@@ -88,7 +97,7 @@ exports.getProduct = (req, res) => {
 
 exports.postDeleteProduct = (req, res) => {
 	const productId = req.body.productId;
-	Product.deleteByID(productId)
+	Product.findByIdAndRemove(productId)
 		.then(() => {
 			console.log('Product Deleted Sucessfully');
 			res.redirect('/admin/products');

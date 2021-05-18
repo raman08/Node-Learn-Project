@@ -18,9 +18,15 @@ block content
 						.card__content
 							h2.product__price $ #{ product.price }
 							p.product__description #{ product.description }
+
+
 						.card__actions
 							- let productUrl = `/products/${product._id}`
 							a(href=productUrl).btn Details
-							+addToCart(product.id)
+
+							if isAuthanticated
+								+addToCart(product.id)
+
+
 		else
 			h1 No Products

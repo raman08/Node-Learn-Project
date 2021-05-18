@@ -1,85 +1,108 @@
-const mongodb = require('mongodb');
-const { getDb } = require('../utils/database');
+const mongoose = require('mongoose');
 
-class Product {
-	constructor(title, price, description, imageUrl, id, userId) {
-		this.title = title;
-		this.price = price;
-		this.description = description;
-		this.imageUrl = imageUrl;
-		this._id = id;
-		this.userId = userId;
-	}
+const product = new mongoose.Schema({
+	title: {
+		type: String,
+		required: true,
+	},
+	price: {
+		type: Number,
+		required: true,
+	},
+	description: {
+		type: String,
+		required: true,
+	},
+	imageUrl: {
+		type: String,
+		required: true,
+	},
+	userId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+		required: true,
+	},
+});
 
-	save() {
-		const db = getDb();
-		let dbOp;
-		if (this._id) {
-			// Update product
-			dbOp = db.collection('products').updateOne(
-				{ _id: mongodb.ObjectId(this._id) },
-				{
-					$set: {
-						title: this.title,
-						price: this.price,
-						description: this.description,
-						imageUrl: this.imageUrl,
-					},
-				}
-			);
-		} else {
-			dbOp = db.collection('products').insertOne(this);
-		}
-		return dbOp
-			.then(() => {
-				console.log('Updating/Saving  product');
-			})
-			.catch(err => console.log(err));
-	}
+module.exports = mongoose.model('Product', product);
 
-	static fetchAll() {
-		const db = getDb();
-		return db
-			.collection('products')
-			.find()
-			.toArray()
-			.then(products => {
-				console.log('Fetching All the products');
-				console.log(products);
-				return products;
-			})
-			.catch(err => {
-				console.log(err);
-			});
-	}
+// class Product {
+// 	constructor(title, price, description, imageUrl, id, userId) {
+// 		this.title = title;
+// 		this.price = price;
+// 		this.description = description;
+// 		this.imageUrl = imageUrl;
+// 		this._id = id;
+// 		this.userId = userId;
+// 	}
 
-	static findById(productId) {
-		const db = getDb();
-		return db
-			.collection('products')
-			.find({ _id: new mongodb.ObjectID(productId) })
-			.next()
-			.then(product => {
-				console.log(product);
-				return product;
-			})
-			.catch(err => {
-				console.log(err);
-			});
-	}
+// 	save() {
+// 		const db = getDb();
+// 		let dbOp;
+// 		if (this._id) {
+// 			// Update product
+// 			dbOp = db.collection('products').updateOne(
+// 				{ _id: mongodb.ObjectId(this._id) },
+// 				{
+// 					$set: {
+// 						title: this.title,
+// 						price: this.price,
+// 						description: this.description,
+// 						imageUrl: this.imageUrl,
+// 					},
+// 				}
+// 			);
+// 		} else {
+// 			dbOp = db.collection('products').insertOne(this);
+// 		}
+// 		return dbOp
+// 			.then(() => {
+// 				console.log('Updating/Saving  product');
+// 			})
+// 			.catch(err => console.log(err));
+// 	}
 
-	static deleteByID(productId) {
-		const db = getDb();
-		return db
-			.collection('products')
-			.deleteOne({ _id: new mongodb.ObjectID(productId) })
-			.then(() => {
-				console.log('Deleted Product');
-			})
-			.catch(err => {
-				console.log(err);
-			});
-	}
-}
+// 	static fetchAll() {
+// 		const db = getDb();
+// 		return db
+// 			.collection('products')
+// 			.find()
+// 			.toArray()
+// 			.then(products => {
+// 				console.log('Fetching All the products');
+// 				console.log(products);
+// 				return products;
+// 			})
+// 			.catch(err => {
+// 				console.log(err);
+// 			});
+// 	}
 
-module.exports = Product;
+// 	static findById(productId) {
+// 		const db = getDb();
+// 		return db
+// 			.collection('products')
+// 			.find({ _id: new mongodb.ObjectID(productId) })
+// 			.next()
+// 			.then(product => {
+// 				console.log(product);
+// 				return product;
+// 			})
+// 			.catch(err => {
+// 				console.log(err);
+// 			});
+// 	}
+
+// 	static deleteByID(productId) {
+// 		const db = getDb();
+// 		return db
+// 			.collection('products')
+// 			.deleteOne({ _id: new mongodb.ObjectID(productId) })
+// 			.then(() => {
+// 				console.log('Deleted Product');
+// 			})
+// 			.catch(err => {
+// 				console.log(err);
+// 			});
+// 	}
+// }

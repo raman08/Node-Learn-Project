@@ -15,7 +15,9 @@ block content
 					li.orders__item
 						h1 Order - # #{order._id}
 						ul.orders__products
-							each product in order.items
+							each product in order.products
 								li.orders__products-item
-									span #{product.title} (#{product.quantity})
-										p Price: #{product.price}
+									span #{product.product.title} (#{product.quantity})
+										p Price: #{product.product.price}
+						p Total Price: #{order.orderValue}
+

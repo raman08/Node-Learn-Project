@@ -21,7 +21,8 @@ block content
 						.card__actions
 							- let productUrl = `/products/${product._id}`
 							a(href=productUrl).btn Details
-							+addToCart(product._id)
+							if isAuthanticated
+								+addToCart(product._id)
 
 		else
 			h1 No Products
