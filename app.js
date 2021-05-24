@@ -16,6 +16,7 @@ const app = express();
 
 app.set('view engine', 'pug');
 app.set('views', './views');
+
 app.use(
 	session({
 		secret: 'I love batman',
@@ -62,18 +63,9 @@ mongoose
 	.connect(MONGODB_URI, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
+		useFindAndModify: false,
 	})
 	.then(() => {
-		User.findOne().then(user => {
-			if (!user) {
-				const user = new User({
-					name: 'Raman',
-					email: 'test@123.com',
-					cart: { products: [] },
-				});
-				user.save();
-			}
-		});
 		app.listen(3000, () => {
 			console.log('Server started at http://localhost:3000');
 		});
