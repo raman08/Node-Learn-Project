@@ -8,10 +8,11 @@ const MongoStore = require('connect-mongo');
 // const csrf = require('csurf');
 const flash = require('connect-flash');
 
+require('dotenv').config();
+
 const errorController = require('./controllers/error');
 
-const MONGODB_URI =
-	'mongodb+srv://node_shop:G15NJtyDC5S1FH6H@cluster0.8zekm.mongodb.net/Shop';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Creating the express app
 const app = express();
@@ -80,8 +81,8 @@ mongoose
 		useFindAndModify: false,
 	})
 	.then(() => {
-		app.listen(3000, () => {
-			console.log('Server started at http://localhost:3000');
+		app.listen(process.env.PORT || 3000, () => {
+			console.log(`Server started at http://localhost:3000`);
 		});
 	})
 	.catch(err => {

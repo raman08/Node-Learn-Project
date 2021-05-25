@@ -1,5 +1,14 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+	service: 'Gmail',
+	auth: {
+		user: process.env.AUTH_EMAIL,
+		pass: process.env.AUTH_PASSWORD,
+	},
+});
 
 exports.getLogin = (req, res) => {
 	let errorMessage = req.flash('error');
@@ -85,6 +94,21 @@ exports.postSighup = (req, res) => {
 				.then(() => {
 					req.flash('sucess', 'Account Created Sucessfully!!');
 					res.redirect('/login');
+
+					const mailOptions = {
+						from: 'nodeshopdevil08@gmail.com',
+						to: email,
+						subject: 'Sign Up sucessfully',
+						html: '<h1>Sign Up sucessfully!!!</h1>',
+					};
+
+					return transporter.sendMail(mailOptions);
+				})
+				.then(() => {
+					console.log('Mail send sucessfully');
+				})
+				.catch(err => {
+					console.log(err);
 				});
 		})
 		.catch(err => console.log(err));
