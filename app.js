@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+// const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const errorController = require('./controllers/error');
 
@@ -13,9 +15,12 @@ const MONGODB_URI =
 
 // Creating the express app
 const app = express();
+// const csrfProtection = csrf();
 
 app.set('view engine', 'pug');
 app.set('views', './views');
+
+// app.use(cookieParser);
 
 app.use(
 	session({
@@ -27,6 +32,9 @@ app.use(
 		unset: 'destroy',
 	})
 );
+
+// app.use(csrfProtection);
+app.use(flash());
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -50,6 +58,12 @@ app.use((req, res, next) => {
 		.catch(err => {
 			console.log(err);
 		});
+});
+
+app.use((req, res, next) => {
+	res.locals.isAuthanticated = req.session.isLoggedIn;
+	// res.locals.csrfToken = req.csrfToken();
+	next();
 });
 
 app.use('/admin', adminRoutes);

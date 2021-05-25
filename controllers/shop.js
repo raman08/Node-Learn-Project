@@ -8,7 +8,7 @@ exports.getProducts = (req, res) => {
 				title: 'All Products',
 				products: products,
 				path: '/products',
-				isAuthanticated: req.session.isLoggedIn,
+				// isAuthanticated: req.session.isLoggedIn,
 			});
 		})
 		.catch(err => {
@@ -23,7 +23,7 @@ exports.getProduct = (req, res) => {
 			res.render('shop/product-details', {
 				title: product.title + ' | Product Details',
 				product: product,
-				isAuthanticated: req.session.isLoggedIn,
+				// isAuthanticated: req.session.isLoggedIn,
 			});
 		})
 		.catch(err => {
@@ -38,7 +38,7 @@ exports.getIndex = (req, res) => {
 				title: 'Shop Home',
 				products: products,
 				path: '/',
-				isAuthanticated: req.session.isLoggedIn,
+				// isAuthanticated: req.session.isLoggedIn,
 			});
 		})
 		.catch(err => {
@@ -58,7 +58,7 @@ exports.getCart = (req, res) => {
 				path: '/cart',
 				title: 'Cart',
 				products: products,
-				isAuthanticated: req.session.isLoggedIn,
+				// isAuthanticated: req.session.isLoggedIn,
 			});
 		});
 };
@@ -70,7 +70,6 @@ exports.postCart = (req, res) => {
 			return req.user.addToCart(product);
 		})
 		.then(result => {
-			console.log(result);
 			res.redirect('/cart');
 		})
 		.catch(err => {
@@ -116,7 +115,7 @@ exports.postOrder = (req, res) => {
 			const orders = new Order({
 				user: {
 					userId: req.user._id,
-					name: req.user.name,
+					email: req.user.email,
 				},
 				products: products,
 				orderValue: totalPrice,
@@ -137,12 +136,11 @@ exports.postOrder = (req, res) => {
 exports.getOrders = (req, res) => {
 	Order.find({ 'user._id': req.user.userId })
 		.then(orders => {
-			console.log(orders);
 			res.render('shop/orders', {
 				path: '/orders',
 				title: 'Your Orders',
 				orders: orders,
-				isAuthanticated: req.session.isLoggedIn,
+				// isAuthanticated: req.session.isLoggedIn,
 			});
 		})
 		.catch(err => {
@@ -154,6 +152,6 @@ exports.getCheckout = (req, res) => {
 	res.render('/shop/checkout', {
 		title: 'Checkout',
 		path: '/checkout',
-		isAuthanticated: req.session.isLoggedIn,
+		// isAuthanticated: req.session.isLoggedIn,
 	});
 };

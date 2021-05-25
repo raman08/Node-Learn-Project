@@ -2,18 +2,27 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 
 exports.getLogin = (req, res) => {
+	let errorMessage = req.flash('error');
+	errorMessage = errorMessage.length > 0 ? errorMessage[0] : undefined;
+
+	let sucessMessage = req.flash('sucess');
+	sucessMessage = sucessMessage.length > 0 ? sucessMessage[0] : undefined;
+
 	res.render('auth/login', {
 		path: '/login',
 		title: 'Login',
-		isAuthanticated: req.session.isLoggedIn,
+		errorMessage: errorMessage,
+		sucessMessage: sucessMessage,
 	});
 };
 
 exports.getSignup = (req, res) => {
+	let errorMessage = req.flash('error');
+	errorMessage = errorMessage.length > 0 ? errorMessage[0] : undefined;
 	res.render('auth/signup', {
 		path: '/signup',
 		title: 'Sign Up',
-		isAuthanticated: req.session.isLoggedIn,
+		errorMessage: errorMessage,
 	});
 };
 
@@ -23,6 +32,10 @@ exports.postLogin = (req, res) => {
 
 	User.findOne({ email: email })
 		.then(user => {
+			if (!user) {
+				req.flash('error', 'Invalid Email or Password');
+				return res.redirect('/login');
+			}
 			bcrypt
 				.compare(password, user.password)
 				.then(doMatch => {
@@ -34,6 +47,7 @@ exports.postLogin = (req, res) => {
 							res.redirect('/');
 						});
 					}
+					req.flash('error', 'Invalid Email or Password');
 					res.redirect('/login');
 				})
 				.catch(err => {
@@ -53,6 +67,7 @@ exports.postSighup = (req, res) => {
 	User.findOne({ email: email })
 		.then(user => {
 			if (user) {
+				req.flash('error', 'Email already exist!!');
 				return res.redirect('/signup');
 			}
 
@@ -68,6 +83,7 @@ exports.postSighup = (req, res) => {
 					return newUser.save();
 				})
 				.then(() => {
+					req.flash('sucess', 'Account Created Sucessfully!!');
 					res.redirect('/login');
 				});
 		})
@@ -77,6 +93,6 @@ exports.postSighup = (req, res) => {
 exports.postLogout = (req, res) => {
 	req.session.destroy(err => {
 		console.log(err);
-		res.redirect('/');
+		res.redirect('/login');
 	});
 };

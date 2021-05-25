@@ -11,14 +11,14 @@ const user = new mongoose.Schema({
 	},
 	cart: {
 		products: [
-			// {
-			// 	productId: {
-			// 		type: mongoose.Schema.Types.ObjectId,
-			// 		ref: 'Product',
-			// 		required: true,
-			// 	},
-			// 	quantity: { type: Number, required: true },
-			// },
+			{
+				productId: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: 'Product',
+					required: true,
+				},
+				quantity: { type: Number, required: true },
+			},
 		],
 	},
 });
