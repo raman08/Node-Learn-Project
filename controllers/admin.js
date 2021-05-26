@@ -60,8 +60,8 @@ exports.getEditProduct = (req, res) => {
 exports.postEditProduct = (req, res) => {
 	const { productId, title, imageUrl, price, description } = req.body;
 
-	Product.findByIdAndUpdate(
-		productId,
+	Product.findOneAndUpdate(
+		{ _id: productId, userId: req.user._id },
 		{
 			title: title,
 			imageUrl: imageUrl,
@@ -80,8 +80,7 @@ exports.postEditProduct = (req, res) => {
 };
 
 exports.getProduct = (req, res) => {
-	// Product.findAll()
-	Product.find()
+	Product.find({ userId: req.user._id })
 		.then(products => {
 			res.render('admin/products', {
 				title: 'Shop Home',
@@ -97,7 +96,7 @@ exports.getProduct = (req, res) => {
 
 exports.postDeleteProduct = (req, res) => {
 	const productId = req.body.productId;
-	Product.findByIdAndRemove(productId)
+	Product.findOneAndRemove({ _id: productId, userId: req.user._id })
 		.then(() => {
 			console.log('Product Deleted Sucessfully');
 			res.redirect('/admin/products');

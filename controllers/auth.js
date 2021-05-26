@@ -1,4 +1,7 @@
+const crypto = require('crypto');
+
 const User = require('../models/user');
+
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 
@@ -52,7 +55,9 @@ exports.postLogin = (req, res) => {
 						req.session.isLoggedIn = true;
 						req.session.user = user;
 						return req.session.save(err => {
-							console.log(err);
+							if (err) {
+								console.log(err);
+							}
 							res.redirect('/');
 						});
 					}
@@ -119,4 +124,126 @@ exports.postLogout = (req, res) => {
 		console.log(err);
 		res.redirect('/login');
 	});
+};
+
+exports.getReset = (req, res) => {
+	let errorMessage = req.flash('error');
+	errorMessage = errorMessage.length > 0 ? errorMessage[0] : undefined;
+
+	let sucessMessage = req.flash('sucess');
+	sucessMessage = sucessMessage.length > 0 ? sucessMessage[0] : undefined;
+
+	res.render('auth/reset', {
+		path: '/reset',
+		title: 'Reset Passowrd',
+		errorMessage: errorMessage,
+		sucessMessage: sucessMessage,
+	});
+};
+
+exports.postReset = (req, res) => {
+	crypto.randomBytes(32, (err, buffer) => {
+		if (err) {
+			req.flash('error', 'Somthing Went Wrong!');
+			res.redirect('/reset');
+		}
+
+		const token = buffer.toString('hex');
+
+		User.findOne({ email: req.body.email })
+			.then(user => {
+				if (!user) {
+					req.flash('error', 'NO user Found!');
+					res.redirect('/reset');
+				}
+
+				user.resetToken = token;
+				user.resetTokenExpire = Date.now() + 3600000;
+				return user.save();
+			})
+			.then(result => {
+				req.flash('sucess', 'Check Your Email for the next steps!');
+				res.redirect('/login');
+
+				const mailOptions = {
+					from: 'nodeshopdevil08@gmail.com',
+					to: req.body.email,
+					subject: 'Reset Password',
+					html: `
+					<h3>You requested a password reset for you account</h3>
+					<p>Click this <a href='http://localhost:3000/reset/${token}'>link</a> to continue.</p>
+					`,
+				};
+
+				return transporter.sendMail(mailOptions);
+			})
+			.then(() => {
+				console.log('Mail Send Sucessfully');
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	});
+};
+
+exports.getResetPassword = (req, res) => {
+	const token = req.params.token;
+
+	User.findOne({ resetToken: token, resetTokenExpire: { $gt: Date.now() } })
+		.then(user => {
+			let errorMessage = req.flash('error');
+			errorMessage = errorMessage.length > 0 ? errorMessage[0] : undefined;
+
+			let sucessMessage = req.flash('sucess');
+			sucessMessage = sucessMessage.length > 0 ? sucessMessage[0] : undefined;
+
+			res.render('auth/reset-password', {
+				path: '/reset-password',
+				title: 'Reset Passowrd',
+				errorMessage: errorMessage,
+				sucessMessage: sucessMessage,
+				userId: user._id.toString(),
+				passwordToken: token,
+			});
+		})
+		.catch(err => {
+			console.log(err);
+		});
+};
+
+exports.postResetPassword = (req, res) => {
+	const password = req.body.password;
+	const confirmPassword = req.body.confirmPassword;
+	const userId = req.body.userId;
+	const token = req.body.passwordToken;
+	let user;
+
+	console.log(userId, token);
+	User.findOne({
+		// resetToken: token,
+		// resetTokenExpire: { $gt: Date.now() },
+		_id: userId,
+	})
+		.then(u => {
+			if (!u) {
+				req.flash('error', 'Somthing Went Wrong!');
+				res.redirect('/reset');
+			}
+			user = u;
+			return bcrypt.hash(password, 12);
+		})
+		.then(hashedPassword => {
+			user.password = hashedPassword;
+			user.resetToken = undefined;
+			user.resetTokenExpire = undefined;
+
+			return user.save();
+		})
+		.then(user => {
+			req.flash('sucess', 'Password Changed Sucessfully!');
+			res.redirect('/login');
+		})
+		.catch(err => {
+			console.log(err);
+		});
 };
