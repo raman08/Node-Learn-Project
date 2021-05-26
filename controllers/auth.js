@@ -4,6 +4,7 @@ const User = require('../models/user');
 
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
+const { validationResult } = require('express-validator');
 
 const transporter = nodemailer.createTransport({
 	service: 'Gmail',
@@ -35,6 +36,12 @@ exports.getSignup = (req, res) => {
 		path: '/signup',
 		title: 'Sign Up',
 		errorMessage: errorMessage,
+		oldInput: {
+			email: '',
+			password: '',
+			confirmPassword: '',
+		},
+		validationErrors: [],
 	});
 };
 
@@ -73,50 +80,56 @@ exports.postLogin = (req, res) => {
 		});
 };
 
-exports.postSighup = (req, res) => {
+exports.postSignup = (req, res) => {
 	const email = req.body.email;
 	const password = req.body.password;
-	const confirmPassword = req.body.confirmPassword;
+	const errors = validationResult(req);
 
-	User.findOne({ email: email })
-		.then(user => {
-			if (user) {
-				req.flash('error', 'Email already exist!!');
-				return res.redirect('/signup');
-			}
+	if (!errors.isEmpty()) {
+		console.log(errors.array());
+		return res.status(422).render('auth/signup', {
+			path: '/signup',
+			title: 'Sign Up',
+			errorMessage: errors.array()[0].msg,
+			oldInput: {
+				email: email,
+				password: password,
+				confirmPassword: req.body.confirmPassword,
+			},
+			validationErrors: errors.array(),
+		});
+	}
 
-			return bcrypt
-				.hash(password, 12)
-				.then(hashPassword => {
-					const newUser = new User({
-						email: email,
-						password: hashPassword,
-						cart: { items: [] },
-					});
+	bcrypt
+		.hash(password, 12)
+		.then(hashPassword => {
+			const newUser = new User({
+				email: email,
+				password: hashPassword,
+				cart: { items: [] },
+			});
 
-					return newUser.save();
-				})
-				.then(() => {
-					req.flash('sucess', 'Account Created Sucessfully!!');
-					res.redirect('/login');
-
-					const mailOptions = {
-						from: 'nodeshopdevil08@gmail.com',
-						to: email,
-						subject: 'Sign Up sucessfully',
-						html: '<h1>Sign Up sucessfully!!!</h1>',
-					};
-
-					return transporter.sendMail(mailOptions);
-				})
-				.then(() => {
-					console.log('Mail send sucessfully');
-				})
-				.catch(err => {
-					console.log(err);
-				});
+			return newUser.save();
 		})
-		.catch(err => console.log(err));
+		.then(() => {
+			req.flash('sucess', 'Account Created Sucessfully!!');
+			res.redirect('/login');
+
+			const mailOptions = {
+				from: 'nodeshopdevil08@gmail.com',
+				to: email,
+				subject: 'Sign Up sucessfully',
+				html: '<h1>Sign Up sucessfully!!!</h1>',
+			};
+
+			return transporter.sendMail(mailOptions);
+		})
+		.then(() => {
+			console.log('Mail send sucessfully');
+		})
+		.catch(err => {
+			console.log(err);
+		});
 };
 
 exports.postLogout = (req, res) => {
@@ -154,14 +167,14 @@ exports.postReset = (req, res) => {
 			.then(user => {
 				if (!user) {
 					req.flash('error', 'NO user Found!');
-					res.redirect('/reset');
+					return res.redirect('/reset');
 				}
 
 				user.resetToken = token;
 				user.resetTokenExpire = Date.now() + 3600000;
 				return user.save();
 			})
-			.then(result => {
+			.then(() => {
 				req.flash('sucess', 'Check Your Email for the next steps!');
 				res.redirect('/login');
 
@@ -213,18 +226,18 @@ exports.getResetPassword = (req, res) => {
 
 exports.postResetPassword = (req, res) => {
 	const password = req.body.password;
-	const confirmPassword = req.body.confirmPassword;
 	const userId = req.body.userId;
 	const token = req.body.passwordToken;
 	let user;
 
 	console.log(userId, token);
 	User.findOne({
-		// resetToken: token,
-		// resetTokenExpire: { $gt: Date.now() },
+		resetToken: token,
+		resetTokenExpire: { $gt: Date.now() },
 		_id: userId,
 	})
 		.then(u => {
+			console.log(u);
 			if (!u) {
 				req.flash('error', 'Somthing Went Wrong!');
 				res.redirect('/reset');
@@ -239,7 +252,7 @@ exports.postResetPassword = (req, res) => {
 
 			return user.save();
 		})
-		.then(user => {
+		.then(() => {
 			req.flash('sucess', 'Password Changed Sucessfully!');
 			res.redirect('/login');
 		})
