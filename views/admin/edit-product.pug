@@ -6,27 +6,41 @@ block styles
 
 block content
 	main
+		if errorMessage
+			- error = errorMessage
+			div(class="user-message user-message--error")  #{error}
+
+		if sucessMessage
+			- message = sucessMessage
+			div(class="user-message user-message--sucess")  #{message}
+
+
+		- titleClass = validationErrors.find(e => e.param === 'title') ? 'invalid' : 's'
+		- imageUrlClass = validationErrors.find(e => e.param === 'imageUrl') ? 'invalid' : 's'
+		- priceClass = validationErrors.find(e => e.param === 'price') ? 'invalid' : 's'
+		- descriptionClass = validationErrors.find(e => e.param === 'description') ? 'invalid' : 's'
+
 		- action = !editing ? '/admin/add-product' : '/admin/edit-product';
 		form.product-form(action=action, method="POST")
 			.form-control
-				- title = editing ? product.title : '';
+				- title = editing || hasErrors ? product.title : '';
 				label(for="title") Title
-				input(type="text", name="title", value=title)#title
+				input(type="text", name="title", value=title, class=titleClass)#title
 
 			.form-control
-				- imageUrl = editing ? product.imageUrl : '';
+				- imageUrl = editing || hasErrors ? product.imageUrl : '';
 				label(for="imageUrl") Image Url
-				input(type="text", name="imageUrl", value=imageUrl)#imageUrl
+				input(type="text", name="imageUrl", value=imageUrl, class=imageUrlClass)#imageUrl
 
 			.form-control
-				- price = editing ? product.price : '';
+				- price = editing || hasErrors ? product.price : '';
 				label(for="price") Price
-				input(type="number", name="price" step=0.01, value=price)#price
+				input(type="number", name="price" step=0.01, value=price, class=priceClass)#price
 
 			.form-control
-				- description = editing ? product.description : '';
+				- description = editing || hasErrors ? product.description : '';
 				label(for="description") Description
-				textarea(rows=4, name="description")#description #{description}
+				textarea(rows=4, name="description", class=descriptionClass)#description #{description}
 
 			if editing
 				- value = product._id;

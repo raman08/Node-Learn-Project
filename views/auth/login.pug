@@ -15,14 +15,20 @@ block content
 			- message = sucessMessage
 			div(class="user-message user-message--sucess")  #{message}
 
-		form.login-form(action='/login', method="POST")
+		- email = oldInput.email
+		- password = oldInput.password
+
+		- emailClass = validationErrors.find(e => e.param === 'email') ? 'invalid' : 's'
+		- passwordClass = validationErrors.find(e => e.param === 'password') ? 'invalid' : 's'
+
+		form.login-form(action='/login', method="POST" novalidate)
 			.form-control
 				label(for="email") Email
-				input(type="email", name="email")#email
+				input(type="email", name="email", value=email, class=emailClass)#email
 
 			.form-control
 				label(for="password") Password
-				input(type="password", name="password")#password
+				input(type="password", name="password", value=password, class=passwordClass)#password
 
 			- csrfToken = csrfToken
 			input(type="hidden", name="_csrf", value=csrfToken)

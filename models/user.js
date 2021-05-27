@@ -11,11 +11,9 @@ const user = new mongoose.Schema({
 	},
 	resetToken: {
 		type: String,
-		default: '',
 	},
 	resetTokenExpire: {
 		type: Date,
-		default: Date.now,
 	},
 	cart: {
 		products: [

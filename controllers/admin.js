@@ -1,15 +1,35 @@
+const { validationResult } = require('express-validator');
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res) => {
 	res.render('admin/edit-product', {
 		title: 'Add Product',
 		path: '/admin/add-product',
-		// isAuthanticated: req.session.isLoggedIn,
+		errorMessage: '',
+		validationErrors: [],
+		hasErrors: false,
 	});
 };
 
 exports.postAddProduct = (req, res) => {
+	const validationErrors = validationResult(req);
 	const { title, imageUrl, price, description } = req.body;
+
+	if (!validationErrors.isEmpty()) {
+		return res.status(422).render('admin/edit-product', {
+			title: 'Add Product',
+			path: '/admin/add-product',
+			errorMessage: validationErrors.array()[0].msg,
+			validationErrors: validationErrors.array(),
+			hasErrors: true,
+			product: {
+				title: title,
+				price: price,
+				description: description,
+				imageUrl: imageUrl,
+			},
+		});
+	}
 
 	const product = new Product({
 		title: title,
@@ -49,7 +69,8 @@ exports.getEditProduct = (req, res) => {
 				path: '/admin/edit-product',
 				editing: editMode,
 				product: product,
-				// isAuthanticated: req.session.isLoggedIn,
+				hasErrors: false,
+				validationErrors: [],
 			});
 		})
 		.catch(err => {
@@ -59,7 +80,25 @@ exports.getEditProduct = (req, res) => {
 
 exports.postEditProduct = (req, res) => {
 	const { productId, title, imageUrl, price, description } = req.body;
+	const validationErrors = validationResult(req);
 
+	if (!validationErrors.isEmpty()) {
+		return res.status(422).render('admin/edit-product', {
+			title: 'Edit Product',
+			path: '/admin/edit-product',
+			errorMessage: validationErrors.array()[0].msg,
+			validationErrors: validationErrors.array(),
+			editing: true,
+			hasErrors: true,
+			product: {
+				title: title,
+				price: price,
+				description: description,
+				imageUrl: imageUrl,
+				_id: productId,
+			},
+		});
+	}
 	Product.findOneAndUpdate(
 		{ _id: productId, userId: req.user._id },
 		{
