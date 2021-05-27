@@ -11,7 +11,7 @@ exports.getAddProduct = (req, res) => {
 	});
 };
 
-exports.postAddProduct = (req, res) => {
+exports.postAddProduct = (req, res, next) => {
 	const validationErrors = validationResult(req);
 	const { title, imageUrl, price, description } = req.body;
 
@@ -46,11 +46,13 @@ exports.postAddProduct = (req, res) => {
 			res.redirect('/admin/products');
 		})
 		.catch(err => {
-			console.log(err);
+			const error = new Error(err);
+			error.statusCode = 500;
+			return next(error);
 		});
 };
 
-exports.getEditProduct = (req, res) => {
+exports.getEditProduct = (req, res, next) => {
 	const editMode = req.query.edit;
 
 	if (!editMode) {
@@ -74,11 +76,13 @@ exports.getEditProduct = (req, res) => {
 			});
 		})
 		.catch(err => {
-			console.log(err);
+			const error = new Error(err);
+			error.statusCode = 500;
+			return next(error);
 		});
 };
 
-exports.postEditProduct = (req, res) => {
+exports.postEditProduct = (req, res, next) => {
 	const { productId, title, imageUrl, price, description } = req.body;
 	const validationErrors = validationResult(req);
 
@@ -114,11 +118,13 @@ exports.postEditProduct = (req, res) => {
 			res.redirect('/admin/products');
 		})
 		.catch(err => {
-			console.log(err);
+			const error = new Error(err);
+			error.statusCode = 500;
+			return next(error);
 		});
 };
 
-exports.getProduct = (req, res) => {
+exports.getProduct = (req, res, next) => {
 	Product.find({ userId: req.user._id })
 		.then(products => {
 			res.render('admin/products', {
@@ -129,11 +135,13 @@ exports.getProduct = (req, res) => {
 			});
 		})
 		.catch(err => {
-			console.log(err);
+			const error = new Error(err);
+			error.statusCode = 500;
+			return next(error);
 		});
 };
 
-exports.postDeleteProduct = (req, res) => {
+exports.postDeleteProduct = (req, res, next) => {
 	const productId = req.body.productId;
 	Product.findOneAndRemove({ _id: productId, userId: req.user._id })
 		.then(() => {
@@ -141,6 +149,8 @@ exports.postDeleteProduct = (req, res) => {
 			res.redirect('/admin/products');
 		})
 		.catch(err => {
-			console.log(err);
+			const error = new Error(err);
+			error.statusCode = 500;
+			return next(error);
 		});
 };

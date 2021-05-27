@@ -3,3 +3,9 @@ exports.get404 = (req, res) => {
 		title: '404 - Page Not found',
 	});
 };
+
+exports.get500 = (req, res) => {
+	res.status(500).render('500', {
+		title: '500 - Internal Server Error',
+	});
+};

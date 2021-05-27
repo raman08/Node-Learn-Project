@@ -50,7 +50,7 @@ exports.getSignup = (req, res) => {
 	});
 };
 
-exports.postLogin = (req, res) => {
+exports.postLogin = (req, res, next) => {
 	const email = req.body.email;
 	const password = req.body.password;
 	const errors = validationResult(req);
@@ -72,7 +72,6 @@ exports.postLogin = (req, res) => {
 	User.findOne({ email: email })
 		.then(user => {
 			if (!user) {
-				console.log(errors);
 				return res.status(422).render('auth/login', {
 					path: '/login',
 					title: 'Login',
@@ -98,7 +97,6 @@ exports.postLogin = (req, res) => {
 							res.redirect('/');
 						});
 					}
-					// req.flash('error', 'Invalid Email or Password');
 					return res.status(422).render('auth/login', {
 						path: '/login',
 						title: 'Login',
@@ -112,11 +110,23 @@ exports.postLogin = (req, res) => {
 					});
 				})
 				.catch(err => {
-					console.log(err);
+					return res.status(500).render('auth/login', {
+						path: '/login',
+						title: 'Login',
+						errorMessage: 'Somthing Went Wrong :( Try again later!!',
+						sucessMessage: null,
+						oldInput: {
+							email: email,
+							password: password,
+						},
+						validationErrors: [],
+					});
 				});
 		})
 		.catch(err => {
-			console.log(err);
+			const error = new Error(err);
+			error.statusCode = 500;
+			return next(error);
 		});
 };
 
@@ -162,19 +172,35 @@ exports.postSignup = (req, res) => {
 				html: '<h1>Sign Up sucessfully!!!</h1>',
 			};
 
-			return transporter.sendMail(mailOptions);
+			transporter
+				.sendMail(mailOptions)
+				.then(() => {
+					console.log('Mail send sucessfully');
+				})
+				.catch(err => {
+					console.log(err);
+				});
 		})
-		.then(() => {
-			console.log('Mail send sucessfully');
-		})
-		.catch(err => {
-			console.log(err);
+		.catch(() => {
+			return res.status(422).render('auth/signup', {
+				path: '/signup',
+				title: 'Sign Up',
+				errorMessage: 'Somthing Went Wrong!!',
+				oldInput: {
+					email: email,
+					password: password,
+					confirmPassword: req.body.confirmPassword,
+				},
+				validationErrors: errors.array(),
+			});
 		});
 };
 
 exports.postLogout = (req, res) => {
 	req.session.destroy(err => {
-		console.log(err);
+		if (err) {
+			console.log(err);
+		}
 		res.redirect('/login');
 	});
 };
@@ -194,7 +220,7 @@ exports.getReset = (req, res) => {
 	});
 };
 
-exports.postReset = (req, res) => {
+exports.postReset = (req, res, next) => {
 	crypto.randomBytes(32, (err, buffer) => {
 		if (err) {
 			req.flash('error', 'Somthing Went Wrong!');
@@ -228,18 +254,24 @@ exports.postReset = (req, res) => {
 					`,
 				};
 
-				return transporter.sendMail(mailOptions);
-			})
-			.then(() => {
-				console.log('Mail Send Sucessfully');
+				return transporter
+					.sendMail(mailOptions)
+					.then(() => {
+						console.log('Mail Send Sucessfully');
+					})
+					.catch(err => {
+						console.log(err);
+					});
 			})
 			.catch(err => {
-				console.log(err);
+				const error = new Error(err);
+				error.statusCode = 500;
+				return next(error);
 			});
 	});
 };
 
-exports.getResetPassword = (req, res) => {
+exports.getResetPassword = (req, res, next) => {
 	const token = req.params.token;
 
 	User.findOne({ resetToken: token, resetTokenExpire: { $gt: Date.now() } })
@@ -260,17 +292,18 @@ exports.getResetPassword = (req, res) => {
 			});
 		})
 		.catch(err => {
-			console.log(err);
+			const error = new Error(err);
+			error.statusCode = 500;
+			return next(error);
 		});
 };
 
-exports.postResetPassword = (req, res) => {
+exports.postResetPassword = (req, res, next) => {
 	const password = req.body.password;
 	const userId = req.body.userId;
 	const token = req.body.passwordToken;
 	let user;
 
-	console.log(userId, token);
 	User.findOne({
 		resetToken: token,
 		resetTokenExpire: { $gt: Date.now() },
@@ -297,6 +330,8 @@ exports.postResetPassword = (req, res) => {
 			res.redirect('/login');
 		})
 		.catch(err => {
-			console.log(err);
+			const error = new Error(err);
+			error.statusCode = 500;
+			return next(error);
 		});
 };
