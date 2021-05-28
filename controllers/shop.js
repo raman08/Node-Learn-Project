@@ -1,3 +1,8 @@
+const fs = require('fs');
+const path = require('path');
+
+const pdfkit = require('pdfkit');
+
 const Order = require('../models/order');
 const Product = require('../models/product');
 
@@ -147,7 +152,7 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-	Order.find({ 'user._id': req.user.userId })
+	Order.find({ 'user.userId': req.user._id })
 		.then(orders => {
 			res.render('shop/orders', {
 				path: '/orders',
@@ -167,4 +172,79 @@ exports.getCheckout = (req, res) => {
 		title: 'Checkout',
 		path: '/checkout',
 	});
+};
+
+exports.getInvoice = (req, res, next) => {
+	const orderId = req.params.orderId;
+	const invoiceName = `Invoice-${orderId}.pdf`;
+	const invoicePath = path.join('Data', 'Invoices', invoiceName);
+
+	Order.findById(orderId)
+		.then(order => {
+			if (!order) {
+				return next(new Error('No order Found'));
+			}
+			if (order.user.userId.toString() !== req.user._id.toString()) {
+				return next(new Error('Unatherized Acess'));
+			}
+
+			const invoicePdf = new pdfkit();
+
+			res.setHeader('Content-Type', 'application/pdf');
+			res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
+
+			invoicePdf.pipe(fs.createWriteStream(invoicePath));
+			invoicePdf.pipe(res);
+
+			invoicePdf.fontSize(22).text('Invoice', { align: 'center' });
+			invoicePdf
+				.fontSize(14)
+				.text('_________________________________', { align: 'center' });
+
+			invoicePdf.fontSize(10).text(' ', { align: 'center' });
+
+			invoicePdf
+				.fontSize(16)
+				.text(`User: ${order.user.email}`, { align: 'right' });
+
+			invoicePdf.fontSize(24).text(' ', { align: 'center' });
+
+			order.products.forEach((prod, index) => {
+				invoicePdf
+					.fontSize(14)
+					.text(
+						`${index + 1}. ${prod.product.title} (${prod.quantity}) - \$${
+							prod.product.price
+						}`
+					);
+			});
+
+			invoicePdf.fontSize(24).text(' ', { align: 'center' });
+
+			invoicePdf
+				.fontSize(10)
+				.text('_________________________________', { align: 'left' });
+
+			invoicePdf.fontSize(9).text(' ', { align: 'center' });
+
+			invoicePdf.fontSize(20).text(`Total: \$${order.orderValue}`);
+
+			invoicePdf.end();
+
+			// fs.readFile(invoicePath, (err, buffer) => {
+			// 	if (err) {
+			// 		return next(err);
+			// 	}
+			// 	res.setHeader('Content-Type', 'application/pdf');
+			// 	res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
+			// 	res.send(buffer);
+			// });
+
+			// const invoiveStream = fs.createReadStream(invoicePath);
+
+			// invoiveStream.pipe(res);
+		})
+		.catch(err => {
+			next(err);
+		});
 };

@@ -1,5 +1,7 @@
 const { validationResult } = require('express-validator');
+
 const Product = require('../models/product');
+const fileHandler = require('../utils/file');
 
 exports.getAddProduct = (req, res) => {
 	res.render('admin/edit-product', {
@@ -118,28 +120,40 @@ exports.postEditProduct = (req, res, next) => {
 			},
 		});
 	}
-	const updatedProduct = {
-		title: title,
-		description: description,
-		price: price,
-	};
+	// const updatedProduct = {
+	// 	title: title,
+	// 	description: description,
+	// 	price: price,
+	// };
 
-	if (image) {
-		updatedProduct.imageUrl = '/' + image.path;
-	}
+	// if (image) {
+	// 	updatedProduct.imageUrl = '/' + image.path;
+	// }
 
-	console.log(updatedProduct);
+	Product.findOne({ _id: productId, userId: req.user._id })
+		.then(product => {
+			if (!product) {
+				return next(new Error('No Product Found'));
+			}
+			console.log(product);
+			product.title = title;
+			product.price = price;
+			product.description = description;
+			console.log(product);
 
-	Product.findOneAndUpdate(
-		{ _id: productId, userId: req.user._id },
-		updatedProduct,
-		{ new: true }
-	)
-		.then(() => {
-			console.log('Product Updated Sucessfully');
-			res.redirect('/admin/products');
+			if (image) {
+				console.log(product.imageUrl);
+				fileHandler.deletefile(product.imageUrl.substring(1));
+				product.imageUrl = '/' + image.path;
+			}
+			return product.save().then(() => {
+				console.log('Product Updated Sucessfully');
+				res.redirect('/admin/products');
+			});
 		})
+
 		.catch(err => {
+			console.log(err);
 			const error = new Error(err);
 			error.statusCode = 500;
 			return next(error);
@@ -165,12 +179,22 @@ exports.getProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
 	const productId = req.body.productId;
-	Product.findOneAndRemove({ _id: productId, userId: req.user._id })
+	Product.findOne({ _id: productId, userId: req.user._id })
+		.then(product => {
+			if (!product) {
+				throw new Error('No Product found');
+			}
+			console.log(product);
+			console.log(product.imageUrl.substring(1));
+			fileHandler.deletefile(product.imageUrl.substring(1));
+			return Product.deleteOne({ _id: productId, userId: req.user._id });
+		})
 		.then(() => {
 			console.log('Product Deleted Sucessfully');
 			res.redirect('/admin/products');
 		})
 		.catch(err => {
+			console.log(err);
 			const error = new Error(err);
 			error.statusCode = 500;
 			return next(error);
