@@ -18,7 +18,7 @@ router.post(
 			.isLength({ min: 3 })
 			.withMessage('Title must be atleast 3 chracter long.')
 			.trim(),
-		body('imageUrl').isURL().withMessage('Enter a correct URL'),
+		// body('imageUrl').isURL().withMessage('Enter a correct URL'),
 		body('price').isNumeric().withMessage('Enter a valid Price'),
 		body('description')
 			.isLength({ min: 5, max: 200 })
@@ -41,7 +41,7 @@ router.post(
 			.isLength({ min: 3 })
 			.withMessage('Title must be atleast 3 chracter long.')
 			.trim(),
-		body('imageUrl').isURL().withMessage('Enter a correct URL'),
+		// body('imageUrl').isURL().withMessage('Enter a correct URL'),
 		body('price').isNumeric().withMessage('Enter a valid Price'),
 		body('description')
 			.isLength({ min: 5, max: 200 })

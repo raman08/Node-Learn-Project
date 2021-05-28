@@ -13,8 +13,23 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = (req, res, next) => {
 	const validationErrors = validationResult(req);
-	const { title, imageUrl, price, description } = req.body;
+	const { title, price, description } = req.body;
+	const image = req.file;
 
+	if (!image) {
+		return res.status(422).render('admin/edit-product', {
+			title: 'Add Product',
+			path: '/admin/add-product',
+			errorMessage: 'The file type is not supported',
+			validationErrors: [],
+			hasErrors: true,
+			product: {
+				title: title,
+				price: price,
+				description: description,
+			},
+		});
+	}
 	if (!validationErrors.isEmpty()) {
 		return res.status(422).render('admin/edit-product', {
 			title: 'Add Product',
@@ -26,11 +41,11 @@ exports.postAddProduct = (req, res, next) => {
 				title: title,
 				price: price,
 				description: description,
-				imageUrl: imageUrl,
 			},
 		});
 	}
 
+	const imageUrl = '/' + image.path;
 	const product = new Product({
 		title: title,
 		price: price,
@@ -83,7 +98,8 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-	const { productId, title, imageUrl, price, description } = req.body;
+	const { productId, title, price, description } = req.body;
+	const image = req.file;
 	const validationErrors = validationResult(req);
 
 	if (!validationErrors.isEmpty()) {
@@ -98,19 +114,25 @@ exports.postEditProduct = (req, res, next) => {
 				title: title,
 				price: price,
 				description: description,
-				imageUrl: imageUrl,
 				_id: productId,
 			},
 		});
 	}
+	const updatedProduct = {
+		title: title,
+		description: description,
+		price: price,
+	};
+
+	if (image) {
+		updatedProduct.imageUrl = '/' + image.path;
+	}
+
+	console.log(updatedProduct);
+
 	Product.findOneAndUpdate(
 		{ _id: productId, userId: req.user._id },
-		{
-			title: title,
-			imageUrl: imageUrl,
-			description: description,
-			price: price,
-		},
+		updatedProduct,
 		{ new: true }
 	)
 		.then(() => {
