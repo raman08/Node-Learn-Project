@@ -135,11 +135,9 @@ exports.postEditProduct = (req, res, next) => {
 			if (!product) {
 				return next(new Error('No Product Found'));
 			}
-			console.log(product);
 			product.title = title;
 			product.price = price;
 			product.description = description;
-			console.log(product);
 
 			if (image) {
 				console.log(product.imageUrl);

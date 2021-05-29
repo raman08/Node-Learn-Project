@@ -1,5 +1,6 @@
 extends ../layouts/main-layout.pug
 include ../mixin/add-to-cart.pug
+include ../mixin/pagination.pug
 
 block styles
 	link(rel="stylesheet", href="/css/product.css")
@@ -26,7 +27,8 @@ block content
 
 							if isAuthanticated
 								+addToCart(product.id)
-
+			hr
+			+pagination(currentPage, totalProducts, hasNextPage, hasPreviousPage, nextPage, previousPage, lastPage)
 
 		else
 			h1 No Products
