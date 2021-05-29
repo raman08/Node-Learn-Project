@@ -2,13 +2,16 @@ extends ../layouts/main-layout.pug
 
 block styles
 	link(rel="stylesheet", href="/css/product.css")
+	script(src="/js/admin.js", defer)
 
 block content
 	main
 		if products.length > 0
 			.grid
 				each product in products
-					article.card.product-item
+					- productId = product._id;
+
+					article.card.product-item(id=`product_${productId}`)
 						header.class__header
 							h1.product__title #{ product.title }
 
@@ -23,10 +26,9 @@ block content
 						.card__actions
 							- editLink = `/admin/edit-product/` + product._id + '?edit=true';
 							a(href=editLink).btn Edit
-							form(action='/admin/delete-product', method='POST')
-								- productId = product._id;
-								input(type='hidden', value = productId, name="productId")
-								button.btn(type='submit') Delete
+
+							//- input(type='hidden', value = productId, name="productId")
+							button.btn(type='button', onclick='deleteProduct(this)', data-productId=productId) Delete
 
 
 		else

@@ -165,7 +165,6 @@ exports.getProduct = (req, res, next) => {
 				title: 'Shop Home',
 				products: products,
 				path: '/admin/products',
-				// isAuthanticated: req.session.isLoggedIn,
 			});
 		})
 		.catch(err => {
@@ -175,26 +174,21 @@ exports.getProduct = (req, res, next) => {
 		});
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-	const productId = req.body.productId;
+exports.deleteProduct = (req, res, next) => {
+	const productId = req.params.productId;
 	Product.findOne({ _id: productId, userId: req.user._id })
 		.then(product => {
 			if (!product) {
 				throw new Error('No Product found');
 			}
-			console.log(product);
-			console.log(product.imageUrl.substring(1));
 			fileHandler.deletefile(product.imageUrl.substring(1));
 			return Product.deleteOne({ _id: productId, userId: req.user._id });
 		})
 		.then(() => {
 			console.log('Product Deleted Sucessfully');
-			res.redirect('/admin/products');
+			res.status(200).json({ message: '[OK] Product Deleted Sucessfully!' });
 		})
 		.catch(err => {
-			console.log(err);
-			const error = new Error(err);
-			error.statusCode = 500;
-			return next(error);
+			res.status(500).json({ message: '[ERROR] Product Deletion Failed!' });
 		});
 };
