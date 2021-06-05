@@ -1,4 +1,6 @@
 const path = require('path');
+const fs = require('fs');
+const https = require('https');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,6 +10,9 @@ const MongoStore = require('connect-mongo');
 // const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
 
 require('dotenv').config();
 
@@ -40,8 +45,23 @@ const fileFilter = (req, file, cb) => {
 	}
 };
 
+const accessLogStream = fs.createWriteStream(
+	path.join(__dirname, 'logs', 'access.log'),
+	{ flags: 'a' }
+);
+
+// const privateKey = fs.readFileSync('server.key');
+// const certificate = fs.readFileSync('server.cret');
+
 app.set('view engine', 'pug');
 app.set('views', './views');
+app.use(
+	helmet({
+		contentSecurityPolicy: false,
+	})
+);
+app.use(compression());
+app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(
 	session({
@@ -105,9 +125,10 @@ app.use('/500', errorController.get500);
 // Adding the 404 page
 app.use(errorController.get404);
 
-// app.use((error, req, res, next) => {
-// 	res.redirect('/500');
-// });
+app.use((error, req, res, next) => {
+	console.log(error);
+	res.redirect('/500');
+});
 
 mongoose
 	.connect(MONGODB_URI, {
@@ -116,9 +137,12 @@ mongoose
 		useFindAndModify: false,
 	})
 	.then(() => {
-		app.listen(process.env.PORT || 3000, () => {
-			console.log(`Server started at http://localhost:3000`);
-		});
+		// https
+		// 	.createServer({ key: privateKey, cert: certificate }, app)
+		// 	.listen(process.env.PORT || 3000, () => {
+		// 		console.log(`Server started at http://localhost:3000`);
+		// 	});
+		app.listen(process.env.PORT || 3000);
 	})
 	.catch(err => {
 		console.log(err);
