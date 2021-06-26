@@ -22,8 +22,8 @@ block content
 			.centered
 				- sessionId= sessionId || 'test'
 				input(type="hidden", value=sessionId, id='stripeSessionID')
-				button.btn(id="orderBtn") Order Now
+				button.btn.btn-primary(id="orderBtn") Order Now
 
 
 		else
-			h1 No Product in Cart
+			h1.centered No Product to Checkout

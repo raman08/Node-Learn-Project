@@ -21,8 +21,8 @@ router.post(
 		// body('imageUrl').isURL().withMessage('Enter a correct URL'),
 		body('price').isNumeric().withMessage('Enter a valid Price'),
 		body('description')
-			.isLength({ min: 5, max: 200 })
-			.withMessage('Description must be between 5 to 200 chracters')
+			.isLength({ min: 5, max: 1000 })
+			.withMessage('Description must be between 5 to 1000 chracters')
 			.trim(),
 	],
 	adminController.postAddProduct
@@ -44,8 +44,8 @@ router.post(
 		// body('imageUrl').isURL().withMessage('Enter a correct URL'),
 		body('price').isNumeric().withMessage('Enter a valid Price'),
 		body('description')
-			.isLength({ min: 5, max: 200 })
-			.withMessage('Description must be between 5 to 200 chracters')
+			.isLength({ min: 5, max: 1000 })
+			.withMessage('Description must be between 5 to 1000 chracters')
 			.trim(),
 	],
 	isAuth,

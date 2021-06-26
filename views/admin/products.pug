@@ -11,25 +11,34 @@ block content
 				each product in products
 					- productId = product._id;
 
-					article.card.product-item(id=`product_${productId}`)
-						header.class__header
-							h1.product__title #{ product.title }
+					article(id=`product_${productId}`)
 
-						.card__image
-							- var imageUrl = product.imageUrl;
-							img(src=imageUrl, alt="Book")
+						<div class="card mb-3" style="max-width: 700px;">
+							<div class="row g-0">
+								<div class="col-md-4 my-2">
+									- var imageUrl = product.imageUrl;
+									img(src=imageUrl, alt="Book",class="img-fluid rounded-start" ,style="max-width: 200px;")
+									//- <img src=imageUrl  alt="...">
+								</div>
+								<div class="col-md-8">
+									<div class="card-body">
+										h5.card-title #{ product.title }
+										- var productDesc = product.description.split(' ').splice(0, 30).join(' ');
+										p.card-text #{ productDesc }...
 
-						.card__content
-							h2.product__price $ #{ product.price }
-							p.product__description #{ product.description }
+										h6.card-text $ #{ product.price }
 
-						.card__actions
-							- editLink = `/admin/edit-product/` + product._id + '?edit=true';
-							a(href=editLink).btn Edit
+										.card__actions
+											- editLink = `/admin/edit-product/` + product._id + '?edit=true';
+											a(href=editLink).btn.btn-primary Edit
 
-							//- input(type='hidden', value = productId, name="productId")
-							button.btn(type='button', onclick='deleteProduct(this)', data-productId=productId) Delete
+											input(type='hidden', value = productId, name="productId")
+											button.btn.danger(type='button', onclick='deleteProduct(this)', data-productId=productId) Delete
+									</div>
+								</div>
+							</div>
+						</div>
 
 
 		else
-			h1 No Products
+			h1.centered No Products

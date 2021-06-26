@@ -34,7 +34,7 @@ form {
 .main-header {
 	width: 100%;
 	height: 3.5rem;
-	background-color: #00695c;
+	background-color: #366efd;
 	padding: 0 1.5rem;
 	display: flex;
 	align-items: center;
@@ -46,6 +46,7 @@ form {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	padding: 0 3em;
 }
 
 .main-header__item-list {
@@ -57,7 +58,7 @@ form {
 
 .main-header__item {
 	margin: 0 1rem;
-	padding: 0;
+	padding: 1em;
 }
 
 .main-header__item a,
@@ -75,7 +76,7 @@ form {
 .main-header__item a.active,
 .main-header__item button:hover,
 .main-header__item button:active {
-	color: #ffeb3b;
+	color: #03223f;
 }
 
 .mobile-nav {
@@ -184,11 +185,17 @@ form {
 
 .card__image img {
 	width: 100%;
+	max-width: 100px;
+	max-height: 40px;
 }
 
 .card__actions {
-	padding: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	padding-top: 2rem;
 	text-align: center;
+	font-size: medium;
 }
 
 .card__actions button,
@@ -256,16 +263,16 @@ form {
 
 .pagination a {
 	padding: 0.5rem;
-	margin: 0 0.5rem;
-	border: 1px solid #00695c;
-	color: #00695c;
+	margin: 0 1rem;
+	border: 1px solid #366efd;
+	color: #366efd;
 	text-decoration: none;
 }
 
 .pagination a:hover,
 .pagination a:active,
 .pagination a.active {
-	background-color: #00695c;
+	background-color: #366efd;
 	color: white;
 }
 @media (min-width: 768px) {

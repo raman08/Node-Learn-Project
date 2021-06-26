@@ -48,6 +48,7 @@ exports.postAddProduct = (req, res, next) => {
 	}
 
 	const imageUrl = '/' + image.path;
+	console.log(imageUrl);
 	const product = new Product({
 		title: title,
 		price: price,
@@ -186,9 +187,13 @@ exports.deleteProduct = (req, res, next) => {
 		})
 		.then(() => {
 			console.log('Product Deleted Sucessfully');
-			res.status(200).json({ message: '[OK] Product Deleted Sucessfully!' });
+			res.status(200).json({
+				message: '[OK] Product Deleted Sucessfully!',
+			});
 		})
 		.catch(err => {
-			res.status(500).json({ message: '[ERROR] Product Deletion Failed!' });
+			res.status(500).json({
+				message: '[ERROR] Product Deletion Failed!',
+			});
 		});
 };

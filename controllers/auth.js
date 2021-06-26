@@ -113,7 +113,8 @@ exports.postLogin = (req, res, next) => {
 					return res.status(500).render('auth/login', {
 						path: '/login',
 						title: 'Login',
-						errorMessage: 'Somthing Went Wrong :( Try again later!!',
+						errorMessage:
+							'Somthing Went Wrong :( Try again later!!',
 						sucessMessage: null,
 						oldInput: {
 							email: email,
@@ -223,16 +224,19 @@ exports.getReset = (req, res) => {
 exports.postReset = (req, res, next) => {
 	crypto.randomBytes(32, (err, buffer) => {
 		if (err) {
+			console.log(err);
 			req.flash('error', 'Somthing Went Wrong!');
-			res.redirect('/reset');
+			return res.redirect('/reset');
 		}
 
 		const token = buffer.toString('hex');
 
 		User.findOne({ email: req.body.email })
 			.then(user => {
+				console.log(user);
 				if (!user) {
 					req.flash('error', 'NO user Found!');
+					console.log('No user found');
 					return res.redirect('/reset');
 				}
 
@@ -277,10 +281,12 @@ exports.getResetPassword = (req, res, next) => {
 	User.findOne({ resetToken: token, resetTokenExpire: { $gt: Date.now() } })
 		.then(user => {
 			let errorMessage = req.flash('error');
-			errorMessage = errorMessage.length > 0 ? errorMessage[0] : undefined;
+			errorMessage =
+				errorMessage.length > 0 ? errorMessage[0] : undefined;
 
 			let sucessMessage = req.flash('sucess');
-			sucessMessage = sucessMessage.length > 0 ? sucessMessage[0] : undefined;
+			sucessMessage =
+				sucessMessage.length > 0 ? sucessMessage[0] : undefined;
 
 			res.render('auth/reset-password', {
 				path: '/reset-password',

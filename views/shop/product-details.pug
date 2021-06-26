@@ -3,15 +3,14 @@ include ../mixin/add-to-cart.pug
 
 
 block content
-	main.centered
+	main.centered(style="padding: 0 5em margin-top: 5%")
 		h1 #{ product.title }
 		hr
 		div.image
 			- let imageUrl = product.imageUrl
 			img(src=imageUrl, alt="Product Title")
 		h2 #{ product.price }
-		p #{ product.description }
-		p #{ product._id }
+		p(style="padding: 0 5em") #{ product.description }
 
 		if isAuthanticated
 			+addToCart(product._id)

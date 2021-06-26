@@ -21,11 +21,11 @@ block content
 							p.product__description #{ product.description }
 						.card__actions
 							- let productUrl = `/products/${product._id}`
-							a(href=productUrl).btn Details
+							a(href=productUrl).btn.btn-primary Details
 							if isAuthanticated
 								+addToCart(product._id)
 			hr
 			+pagination(currentPage, totalProducts, hasNextPage, hasPreviousPage, nextPage, previousPage, lastPage)
 
 		else
-			h1 No Products
+			h1.centered No Products

@@ -10,6 +10,7 @@ block content
 			- error = errorMessage
 			div(class="user-message user-message--error")  #{error}
 
+
 		- email = oldInput.email
 		- password = oldInput.password
 		- confirmPassword = oldInput.confirmPassword
@@ -34,4 +35,4 @@ block content
 			- csrfToken = csrfToken
 			input(type="hidden", name="_csrf", value=csrfToken)
 
-			button.btn(type="submit") Sign Up
+			button.btn.btn-primary(type="submit") Sign Up
